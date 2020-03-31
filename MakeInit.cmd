@@ -4,41 +4,36 @@
 
 @echo off
 if "%~1" == "" exit
+if not "%~d1" == "%SystemDrive%" exit
 
 pushd %~1 2>nul
 :--init--
 set "CURRENTPC=%UserDomain%"
 
-set "KEY=Fonts=38;ICC=colorui.dll:0"
+set "KEY=Fonts=38;ICC=colorui.dll:0;Program Files=69;Program Files (x86)=69;ProgramData=69;Windows=69;Users=imageres.dll:169"
 
 
 :--pcname--
-md "%CURRENTPC%" 2>nul || goto :--AllDesktop--
+md "%CURRENTPC%" 2>nul || goto :--DirLink--
 pushd "%CURRENTPC%"
-	call:[WTini] "%CD%" "" 15
+call:[WTini] "%CD%" "" 15
+setlocal enabledelayedexpansion
+:--pcname--#loop
+for /f "tokens=1* delims=;" %%i in ("!KEY!") do (
+	for /f "tokens=1,2 delims==" %%k in ("%%i") do call:[MKKEY] "%CD%" "%%~k" "%%~l"
+	set "KEY=%%j"
+	goto :--pcname--#loop
+)
+endlocal
 popd
 
-:--AllDesktop--
-mklink /j "%CURRENTPC%\Desktop" "%SystemDrive%\Users\Public\Desktop" 2>nul || goto :--ProgramData--
-
-:--ProgramData--
-md "%CURRENTPC%\ProgramData" 2>nul || goto :--ETC--
-pushd "%CURRENTPC%\ProgramData"
-	call:[WTini] "%CD%" "" 69
-popd
-
-:--ETC--
+:--DirLink--
 md "%CURRENTPC%\ETC" 2>nul || goto :--template--
 pushd "%CURRENTPC%\ETC"
 call:[WTini] "%CD%" "" 72
-setlocal enabledelayedexpansion
-:--ETC--#loop
-for /f "tokens=1* delims=;" %%i in ("!KEY!") do (
-	for /f "tokens=1,2 delims==" %%k in ("%%i") do call:[MKKEY] "%CD%" %%k %%l
-	set "KEY=%%j"
-	goto :--ETC--#loop
-)
-endlocal
+mklink /j "%CD%\Desktop" "%SystemDrive%\Users\Public\Desktop" 2>nul
+mklink /j "%CD%\Syscfg" "%SystemDrive%\Windows\System32\config" 2>nul
+mklink /j "%CD%\Defauser" "%SystemDrive%\Users\Default" 2>nul
 popd
 
 :--template--
@@ -65,9 +60,9 @@ goto :eof
 
 :[MKKEY]
 setlocal enabledelayedexpansion
-set "pa=%~1\%2"
-set "key=%2"
-set "value=%3"
+set "pa=%~1\%~2"
+set "key=%~2"
+set "value=%~3"
 set "value2=%value::=" "%"
 if "%value%" == "%value2%" set value2=" "%value%
 md "%pa%" 2>nul
