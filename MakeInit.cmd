@@ -4,7 +4,6 @@
 
 @echo off
 if "%~1" == "" exit
-if not "%~d1" == "%SystemDrive%" exit
 
 pushd %~1 2>nul
 :--init--
