@@ -5,7 +5,7 @@
 @echo off
 if "%~1" == "" exit
 
-pushd "%~dp0"
+pushd "%~dp0%UserDomain%"
 for %%i in (%*) do call:[UnFiles] "%%~i"
 goto :eof
 

@@ -12,8 +12,17 @@ set "CURRENTPC=%UserDomain%"
 set "KEY=Fonts=38;ICC=colorui.dll:0;Program Files=69;Program Files (x86)=69;ProgramData=69;Windows=69;Users=imageres.dll:169"
 
 
+:--DirLink--
+md "ETC" 2>nul || goto :--pcname--
+pushd "ETC"
+call:[WTini] "%CD%" "" 72
+mklink /j "%CD%\Desktop" "%SystemDrive%\Users\Public\Desktop" 2>nul
+mklink /j "%CD%\Syscfg" "%SystemDrive%\Windows\System32\config" 2>nul
+mklink /j "%CD%\Defauser" "%SystemDrive%\Users\Default" 2>nul
+popd
+
 :--pcname--
-md "%CURRENTPC%" 2>nul || goto :--DirLink--
+md "%CURRENTPC%" 2>nul || goto :--template--
 pushd "%CURRENTPC%"
 call:[WTini] "%CD%" "" 15
 setlocal enabledelayedexpansion
@@ -24,15 +33,6 @@ for /f "tokens=1* delims=;" %%i in ("!KEY!") do (
 	goto :--pcname--#loop
 )
 endlocal
-popd
-
-:--DirLink--
-md "%CURRENTPC%\ETC" 2>nul || goto :--template--
-pushd "%CURRENTPC%\ETC"
-call:[WTini] "%CD%" "" 72
-mklink /j "%CD%\Desktop" "%SystemDrive%\Users\Public\Desktop" 2>nul
-mklink /j "%CD%\Syscfg" "%SystemDrive%\Windows\System32\config" 2>nul
-mklink /j "%CD%\Defauser" "%SystemDrive%\Users\Default" 2>nul
 popd
 
 :--template--
