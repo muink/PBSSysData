@@ -9,22 +9,23 @@
 cd /d %~dp0
 if not "%~d0" == "%SystemDrive%" goto ERROR
 call .\MakeInit.cmd "%~dp0"
-set "CURRENTDEVICE=%~d0"
+set "CURRENTDEVICE=%SystemDrive%"
+set "CURRENTROOT=%SystemRoot%"
 
 set "ERRORLOG=%~dp0%CURRENTPC%\Error.log"
 null>"%ERRORLOG%" 2>nul
 set /a ERRORCOUNT=0
 
 :LinkFiles
-call:[LinkFiles] "*.ttf *.ttc *.otf *.otc" "%~dp0%CURRENTPC%\Fonts" "%SystemRoot%\Fonts"
-call:[LinkFiles] "*.icc *.icm" "%~dp0%CURRENTPC%\ICC" "%SystemRoot%\System32\spool\drivers\color"
+call:[LinkFiles] "*.ttf *.ttc *.otf *.otc" "%~dp0%CURRENTPC%\Fonts" "%CURRENTROOT%\Fonts"
+call:[LinkFiles] "*.icc *.icm" "%~dp0%CURRENTPC%\ICC" "%CURRENTROOT%\System32\spool\drivers\color"
 
 :MapFiles
-call:[MapFiles] "*" "%~dp0%CURRENTPC%\Program Files" "%SystemDrive%\Program Files"
-call:[MapFiles] "*" "%~dp0%CURRENTPC%\Program Files (x86)" "%SystemDrive%\Program Files (x86)"
-call:[MapFiles] "*" "%~dp0%CURRENTPC%\ProgramData" "%SystemDrive%\ProgramData"
-call:[MapFiles] "*" "%~dp0%CURRENTPC%\Windows" "%SystemDrive%\Windows"
-call:[MapFiles] "*" "%~dp0%CURRENTPC%\Users" "%SystemDrive%\Users"
+call:[MapFiles] "*" "%~dp0%CURRENTPC%\Program Files" "%CURRENTDEVICE%\Program Files"
+call:[MapFiles] "*" "%~dp0%CURRENTPC%\Program Files (x86)" "%CURRENTDEVICE%\Program Files (x86)"
+call:[MapFiles] "*" "%~dp0%CURRENTPC%\ProgramData" "%CURRENTDEVICE%\ProgramData"
+call:[MapFiles] "*" "%~dp0%CURRENTPC%\Windows" "%CURRENTDEVICE%\Windows"
+call:[MapFiles] "*" "%~dp0%CURRENTPC%\Users" "%CURRENTDEVICE%\Users"
 
 
 if %ERRORCOUNT% gtr 0 (
