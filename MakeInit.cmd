@@ -58,11 +58,13 @@ popd & goto :eof
 :[WTini]
 setlocal enabledelayedexpansion
 set "icolib=%~2"
+set "localname=%~4"
 if "%icolib%" == "" set "icolib=SHELL32.dll"
+if "%icolib%" == "imageres.dll" if "%~3" == "169" set "localname=@%%SystemRoot%%\system32\shell32.dll,-21813"
 set "pa=%~1"
 (echo.[.ShellClassInfo]
-if not "%~4" == "" echo.LocalizedResourceName=%~4)>"%pa%\desktop.ini"
 echo.IconResource=%%SystemRoot%%\system32\%icolib%,%~3
+if not "%localname%" == "" echo.LocalizedResourceName=%localname%)>"%pa%\desktop.ini"
 attrib +r "%pa%"
 attrib +s +h "%pa%\desktop.ini"
 endlocal
