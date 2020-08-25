@@ -7,7 +7,17 @@ if "%~1" == "" exit
 
 pushd %~1 2>nul
 :--init--
-set "CURRENTPC=%UserDomain%"
+set "USERDOMAIN=%UserDomain%"
+rem MachineGUID
+for /f "delims=" %%i in ('reg query HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid 2^>nul') do (
+    for /f "delims=" %%o in ('echo %%i ^| find /i "MachineGuid"') do (
+        for /f "tokens=3 delims= " %%p in ("%%o") do (
+            set "CURRENTPC=%%p"
+        )
+    )
+)
+rem dmi info
+rem wmic csproduct get UUIDs
 
 set "KEY=Fonts=38;ICC=colorui.dll:0;Program Files=69;Program Files (x86)=69;ProgramData=69;Windows=69;Users=imageres.dll:169"
 
@@ -24,7 +34,7 @@ popd
 :--pcname--
 md "%CURRENTPC%" 2>nul || goto :--template--
 pushd "%CURRENTPC%"
-call:[WTini] "%CD%" "" 15
+call:[WTini] "%CD%" "" 15 "%USERDOMAIN%"
 setlocal enabledelayedexpansion
 :--pcname--#loop
 for /f "tokens=1* delims=;" %%i in ("!KEY!") do (
@@ -51,7 +61,8 @@ set "icolib=%~2"
 if "%icolib%" == "" set "icolib=SHELL32.dll"
 set "pa=%~1"
 (echo.[.ShellClassInfo]
-echo.IconResource=%SystemRoot%\system32\%icolib%,%~3)>"%pa%\desktop.ini"
+echo.IconResource=%SystemRoot%\system32\%icolib%,%~3
+if not "%~4" == "" echo.LocalizedResourceName=%~4)>"%pa%\desktop.ini"
 attrib +r "%pa%"
 attrib +s +h "%pa%\desktop.ini"
 endlocal
