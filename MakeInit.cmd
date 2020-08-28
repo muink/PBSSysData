@@ -19,7 +19,11 @@ for /f "delims=" %%i in ('reg query HKLM\SOFTWARE\Microsoft\Cryptography /v Mach
 rem dmi info
 rem wmic csproduct get UUIDs
 
-set "KEY=Fonts=38;ICC=colorui.dll:0;Program Files=69;Program Files (x86)=69;ProgramData=69;Windows=69;Users=imageres.dll:169"
+set "LINKSDR=Dir"
+set "LINKSFL=Links.ini"
+
+set "SUBKY=Program Files=69;Program Files (x86)=69;ProgramData=69;Windows=69;Users=imageres.dll:169"
+set "KEY=%LINKSDR%=imageres.dll:176;Fonts=38;ICC=colorui.dll:0;%SUBKY%"
 
 
 :--DirLink--
@@ -42,7 +46,24 @@ for /f "tokens=1* delims=;" %%i in ("!KEY!") do (
 	set "KEY=%%j"
 	goto :--pcname--#loop
 )
+pushd "%LINKSDR%"
+if not exist %LINKSFL% (
+	(echo.# One target path per line
+	echo.#"%%ProgramFiles%%\Wireshark\profiles"
+	echo.#"%%ProgramFiles(x86)%%\MSI Afterburner\Profiles"
+	echo.#"%%AllUsersProfile%%\Microsoft\Windows\Start Menu"
+	echo.#"%%SystemRoot%%\Resources\Themes"
+	echo.#"%%SystemDrive%%\Users\%%UserName%%"
+	)>%LINKSFL%
+)
+:--pcname--#dirloop
+for /f "tokens=1* delims=;" %%i in ("!SUBKY!") do (
+	for /f "tokens=1,2 delims==" %%k in ("%%i") do call:[MKKEY] "%CD%" "%%~k" "%%~l"
+	set "SUBKY=%%j"
+	goto :--pcname--#dirloop
+)
 endlocal
+popd
 popd
 
 :--template--
