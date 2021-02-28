@@ -26,6 +26,9 @@ set "SUBKY=Program Files=69;Program Files (x86)=69;ProgramData=69;Windows=69;Use
 set "KEY=%LINKSDR%=imageres.dll:176;Fonts=38;ICC=colorui.dll:0;%SUBKY%"
 
 
+:--icon--
+if not exist desktop.ini call:[WTini] "%cd%" "" "69"
+
 :--DirLink--
 md "ETC" 2>nul || goto :--pcname--
 pushd "ETC"
@@ -36,7 +39,10 @@ mklink /j "%CD%\Defauser" "%SystemDrive%\Users\Default" 2>nul
 popd
 
 :--pcname--
-md "%CURRENTPC%" 2>nul || goto :--template--
+md "%CURRENTPC%" 2>nul || (
+	call:[WTini] "%CD%" "" 15 "%USERDOMAIN%"
+	goto :--template--
+)
 pushd "%CURRENTPC%"
 call:[WTini] "%CD%" "" 15 "%USERDOMAIN%"
 setlocal enabledelayedexpansion
@@ -83,6 +89,7 @@ set "localname=%~4"
 if "%icolib%" == "" set "icolib=SHELL32.dll"
 if "%icolib%" == "imageres.dll" if "%~3" == "169" set "localname=@%%SystemRoot%%\system32\shell32.dll,-21813"
 set "pa=%~1"
+del /f /q /a "%pa%\desktop.ini" 2>nul
 (echo.[.ShellClassInfo]
 echo.IconResource=%%SystemRoot%%\system32\%icolib%,%~3
 if not "%localname%" == "" echo.LocalizedResourceName=%localname%)>"%pa%\desktop.ini"
