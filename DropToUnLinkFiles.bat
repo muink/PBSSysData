@@ -5,7 +5,17 @@
 @echo off
 if "%~1" == "" exit
 
-pushd "%~dp0%UserDomain%"
+:--init--
+rem MachineGUID
+for /f "delims=" %%i in ('reg query HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid 2^>nul') do (
+    for /f "delims=" %%o in ('echo %%i ^| find /i "MachineGuid"') do (
+        for /f "tokens=3 delims= " %%p in ("%%o") do (
+            set "CURRENTPC=%%p"
+        )
+    )
+)
+
+pushd "%~dp0%CURRENTPC%"
 for %%i in (%*) do call:[UnFiles] "%%~i"
 goto :eof
 
