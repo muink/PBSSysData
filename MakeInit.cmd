@@ -5,7 +5,8 @@
 @echo off
 if "%~1" == "" exit
 
-pushd %~1 2>nul
+set "nodedir=%~1"
+pushd %nodedir%
 :--init--
 set "USERDOMAIN=%UserDomain%"
 rem MachineGUID
@@ -75,7 +76,7 @@ popd
 :--template--
 
 if exist "%~dp0One-off_Run.cmd" (
-	call "%~dp0One-off_Run.cmd" "%~1" 2>nul
+	call "%~dp0One-off_Run.cmd" "%nodedir%" 2>nul
 	del /f /q "%~dp0One-off_Run.cmd" >nul 2>nul
 )
 
