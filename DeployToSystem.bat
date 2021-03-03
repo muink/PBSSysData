@@ -16,6 +16,8 @@ set "LASTDEVICE=%~d0"
 set "LASTDEVFILE=%~dp0%CURRENTPC%\.drv"
 for /f "delims=" %%i in ('type "%LASTDEVFILE%" 2^>nul') do set "LASTDEVICE=%%~i"
 
+::set "MKLINKHIDE=attrib"
+set "MKLINKHIDE=rem"
 set "ERRORLOG=%~dp0%CURRENTPC%\Error.log"
 null>"%ERRORLOG%" 2>nul
 set /a ERRORCOUNT=0
@@ -106,6 +108,7 @@ if exist "%srcpath%\" (
 					if "%%~l" == "%LASTDEVICE%%srcpath:~2%" (
 						rd /q "%dstpath%" >nul 2>nul
 						mklink /j "%dstpath%" "%srcpath%"
+						%MKLINKHIDE% /l +s +h "%dstpath%" 2>nul
 					) else echo."%dstpath%" is linked to another location, Unable to create dirlink...>>"%ERRORLOG%" && set /a ERRORCOUNT+=1
 				)
 			)
@@ -113,6 +116,7 @@ if exist "%srcpath%\" (
 	) else (
 		if not exist "%dstpath%\.." md "%dstpath%\.." 2>nul
 		mklink /j "%dstpath%" "%srcpath%"
+		%MKLINKHIDE% /l +s +h "%dstpath%" 2>nul
 	)
 ) else (
 	echo.Src: "%srcpath%\" is not exist, Unable to create dirlink...>>"%ERRORLOG%"
