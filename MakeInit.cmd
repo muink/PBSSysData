@@ -41,7 +41,7 @@ popd
 
 :--pcname--
 md "%CURRENTPC%" 2>nul || (
-	call:[WTini] "%CD%" "" 15 "%USERDOMAIN%"
+	call:[WTini] "%CURRENTPC%" "" 15 "%USERDOMAIN%"
 	goto :--template--
 )
 pushd "%CURRENTPC%"
